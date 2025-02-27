@@ -1,0 +1,7 @@
+discord
+aiohttp
+pillow
+numpy
+easyocr
+python-dotenv
+pyttsx3==2.90
