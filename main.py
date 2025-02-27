@@ -15,12 +15,27 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 # Intents
 intents = discord.Intents.default()
-intents.messages = True
+
+# Enable all necessary intents manually
+intents.message_content = True  # Allows reading message content
+intents.guilds = True  # Allows bot to receive guild (server) updates
+intents.members = True  # Allows bot to receive member updates (e.g., join/leave)
+intents.reactions = True  # Allows bot to receive reaction events
+intents.presences = True  # Allows bot to see members' presence (status)
+intents.typing = True  # Allows bot to receive typing notifications
+intents.messages = True  # Allows bot to receive message events
+intents.dm_messages = True  # Allows bot to receive direct messages
+intents.guild_messages = True  # Allows bot to receive messages in servers
+intents.guild_reactions = True  # Allows bot to receive reactions in servers
+intents.guild_typing = True  # Allows bot to receive typing events in servers
+
+# Create bot client with the specified intents
 client = discord.Client(intents=intents)
 
 # Set lang
 reader = easyocr.Reader(['en'])
 
+#File Extraction Function
 async def extractTextFromImg(image_url):
     try:
         async with aiohttp.ClientSession() as session:
@@ -40,19 +55,19 @@ async def extractTextFromImg(image_url):
                 
     except Exception as e:
         return f"Error: {str(e)}"
-
+#Check if The Bot Is Alived 
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
 
 @client.event
-async def on_message(message):
+async def on_message(message):#Checks if the message is from the bot itself
     if message.author == client.user:
         return
 
-    if message.attachments:  # FIXED: Used 'attachments' instead of 'attachment'
+    if message.attachments:  
         for attachment in message.attachments:
-            if attachment.content_type and attachment.content_type.startswith('image'):  # FIXED: Used 'startswith' instead of 'startwith'
+            if attachment.content_type and attachment.content_type.startswith('image'): 
                 await message.channel.send("Extracting Text....")
                 extracted_text = await extractTextFromImg(attachment.url)
                 await message.channel.send(f"{extracted_text}")
